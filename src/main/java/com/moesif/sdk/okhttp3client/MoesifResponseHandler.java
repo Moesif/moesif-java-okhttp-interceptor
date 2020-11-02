@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 
 public class MoesifResponseHandler implements ResponseHandler {
@@ -22,20 +23,23 @@ public class MoesifResponseHandler implements ResponseHandler {
     private ByteArrayOutputStream outputStream;
     private Boolean jsonHeader;
     private String moesifApplicationId;
-    private static Integer maxAllowedBodySize;
+    private static Long maxAllowedBodySize;
+    private EventModelBuffer buffer;
 
     public MoesifResponseHandler(EventRequestModel loggedRequest,
                                  EventResponseModel loggedResponse,
                                  ByteArrayOutputStream outputStream,
                                  Boolean jsonHeader,
                                  String moesifApplicationId,
-                                 Integer maxAllowedBodySize) {
+                                 Long maxAllowedBodyBytes,
+                                 Integer maxSendBufferSize) {
         this.loggedRequest = loggedRequest;
         this.loggedResponse = loggedResponse;
         this.outputStream = outputStream;
         this.jsonHeader = jsonHeader;
         this.moesifApplicationId = moesifApplicationId;
-        this.maxAllowedBodySize = maxAllowedBodySize;
+        this.maxAllowedBodySize = maxAllowedBodyBytes;
+        this.buffer = new EventModelBuffer(maxSendBufferSize);
     }
 
     @Override
@@ -77,13 +81,17 @@ public class MoesifResponseHandler implements ResponseHandler {
                             loggedRequest,
                             loggedResponse
                     );
-            MoesifApiLogEvent.sendEventAsync(moesifApplicationId,
-                    loggedEvent);
+            buffer.add(loggedEvent);
+            if (buffer.isFull()){
+                List<EventModel> loggedEvents = buffer.empty();
+                MoesifApiLogEvent.sendEventsAsync(moesifApplicationId, loggedEvents);
+            }
         } catch (IllegalArgumentException e) {
             logger.warn("Is Moesif Application ID configured?", e.getMessage());
         } catch (Exception e) {
             logger.warn("Error creating or submitting event", e.getMessage());
         } catch (Throwable throwable) {
+            // jackson 2.8.4 works. 2.11.3 might not.
             logger.warn("Error with throwable", throwable);
         }
     }
@@ -92,14 +100,15 @@ public class MoesifResponseHandler implements ResponseHandler {
             boolean isJsonHeader,
             EventResponseModel loggedResponse,
             ByteArrayOutputStream bodyStream,
-            Integer maxAllowedBodySize)
+            Long maxAllowedBodySize)
             throws IOException {
-        if (isJsonHeader) {
-            loggedResponse.setBody(
-                    JsonSerialize.jsonBAOutStreamToObj(bodyStream));
-        } else {
-            if (bodyStream.size() <= maxAllowedBodySize) {
-                loggedResponse.setBody(EncodeUtils.BaosToB64Str(bodyStream));
+        if ((null != bodyStream) && (bodyStream.size() <= maxAllowedBodySize)) {
+            if (isJsonHeader) {
+                loggedResponse.setBody(
+                        JsonSerialize.jsonBAOutStreamToObj(bodyStream));
+            } else {
+                loggedResponse.setBody(
+                        EncodeUtils.BaosToB64Str(bodyStream));
                 loggedResponse.setTransferEncoding("base64");
             }
         }

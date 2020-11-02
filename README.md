@@ -3,7 +3,7 @@
   
 ## Introduction  
   
-`moesif-java-okhttp-interceptor` is a Java OkHttp interceptor that logs outbound HTTP(s) calls and sends events to [Moesif](https://www.moesif.com) for API analytics and log analysis.  
+`moesif-java-okhttp-interceptor` is a Java OkHttp interceptor that logs outbound HTTP(s) calls and sends events to [Moesif](https://www.moesif.com) for API analytics and monitoring    .  
   
 The SDK includes `Java` and `Kotlin` examples. It is implemented as a [OkHttp Interceptor](https://square.github.io/okhttp/interceptors/)  
 and can be used either as `Application Interceptor ` or `Network Interceptor`. It requires `Moesif Application Id` credentials to submit events to Moesif.  
@@ -45,7 +45,7 @@ $ export MOESIF_APPLICATION_ID = "Your Moesif App Id Here"
 ```  
 Build the OkHttp client.  
   
-The Moesif OkHtpp Interceptor can be utilized for both types of [OkHttp interceptors Link](https://square.github.io/okhttp/interceptors/)  
+The Moesif OkHttp Interceptor can be utilized for both types of [OkHttp interceptors Link](https://square.github.io/okhttp/interceptors/)  
   
 | |  Application Interceptor |  
 |---|---|  
@@ -69,7 +69,7 @@ $ export MOESIF_APPLICATION_ID = "Your Moesif App Id Here"
 import com.moesif.sdk.okhttp3client.MoesifOkHttp3Interceptor
 
 val client = OkHttpClient.Builder()
- .addInterceptor(MoesifOkHttp3Interceptor()) // The only modification to oficial sample
+ .addInterceptor(MoesifOkHttp3Interceptor()) // The only modification to official sample
  .build()
 
 val request = Request.Builder()  
@@ -93,7 +93,7 @@ $ export MOESIF_APPLICATION_ID = "Your Moesif App Id Here"
 import com.moesif.sdk.okhttp3client.MoesifOkHttp3Interceptor;  
   
 private final OkHttpClient client = new OkHttpClient.Builder()  
- .addInterceptor(new MoesifOkHttp3Interceptor())  // The only modification to oficial sample
+ .addInterceptor(new MoesifOkHttp3Interceptor())  // The only modification to official sample
  .build();  
 
 public void run() throws Exception {  

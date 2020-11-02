@@ -11,6 +11,8 @@ public class MoesifApiConnConfig {
     public static String DEFAULT_BASE_URI = "https://api.moesif.net";
     public String baseUri;
 
+    public Integer eventsBufferSize = 5;
+
 
     public Collection<String> bodyContentTypesBlackList =
             DefaultDomainData.bodyContentTypesBlackList;
@@ -99,12 +101,30 @@ public class MoesifApiConnConfig {
         return s;
     }
     /**
-     * Max bytes of body size allowed.
+     * Max bytes of body bytes for Request.
      * All body above this size are dropped.
      *
      * @return
      */
-    public Integer getMaxAllowedBodySize() {
-        return DefaultDomainData.maxAllowedBytes;
+
+    public Long getMaxAllowedBodyBytesRequest() {
+        return DefaultDomainData.maxAllowedBodyBytesRequest;
+    }
+    /**
+     * Max bytes of body bytes for Response.
+     * All body above this size are dropped.
+     *
+     * @return
+     */
+    public Long getMaxAllowedBodyBytesResponse() {
+        return DefaultDomainData.maxAllowedBodyBytesResponse;
+    }
+
+    public Integer getEventsBufferSize() {
+        return eventsBufferSize;
+    }
+
+    public void setEventsBufferSize(Integer eventsBufferSize) {
+        this.eventsBufferSize = Math.max(eventsBufferSize, 1);
     }
 }

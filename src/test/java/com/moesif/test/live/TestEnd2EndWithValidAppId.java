@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,6 +34,7 @@ public class TestEnd2EndWithValidAppId extends End2EndRunner {
         for (boolean isNetworkIntercept : APP_AND_NET_INTERCEPT)
             assertDoesNotThrow(() -> {
                         runInterceptor(url, isNetworkIntercept);
+                        TimeUnit.SECONDS.sleep(5); // ALLOW FOR ASYNC EVENTS TO BE SUBMITTED
                     },
                     toMsg("No except expected: ", url, isNetworkIntercept));
     }
@@ -45,6 +47,7 @@ public class TestEnd2EndWithValidAppId extends End2EndRunner {
         for (boolean isNetworkIntercept : APP_AND_NET_INTERCEPT)
             assertThrows(ConnectException.class, () -> {
                         runInterceptor(url, isNetworkIntercept);
+                        TimeUnit.SECONDS.sleep(5); // ALLOW FOR ASYNC EVENTS TO BE SUBMITTED
                     },
                     toMsg("Conn except expected: ", url, isNetworkIntercept));
     }
@@ -70,6 +73,7 @@ public class TestEnd2EndWithValidAppId extends End2EndRunner {
                                 verb,
                                 SAMPLE_JSON_BODY,
                                 isNetworkIntercept);
+                        TimeUnit.SECONDS.sleep(5); // ALLOW FOR ASYNC EVENTS TO BE SUBMITTED
                     },
                     toMsg("No exception expected: [" + verb + "]",
                             url,
@@ -88,6 +92,7 @@ public class TestEnd2EndWithValidAppId extends End2EndRunner {
         for (boolean isNetworkIntercept : APP_AND_NET_INTERCEPT)
             assertDoesNotThrow(() -> {
                         runTestWithBody(url, verb, null, isNetworkIntercept);
+                        TimeUnit.SECONDS.sleep(5); // ALLOW FOR ASYNC EVENTS TO BE SUBMITTED
                     },
                     toMsg("No exception expected: [" + verb + "]",
                             url,
@@ -106,8 +111,7 @@ public class TestEnd2EndWithValidAppId extends End2EndRunner {
                 builder.authenticator(new Authenticator() {
                     @Override
                     public Request authenticate(Route route,
-                                                Response response)
-                            throws IOException {
+                                                Response response){
                         if (StringUtils.isNotBlank(
                                 response.request().header("Authorization"))) {
                             // Give up, we've already attempted to authenticate.

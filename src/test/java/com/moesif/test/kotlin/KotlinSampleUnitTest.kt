@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.jupiter.api.Test
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -23,7 +24,7 @@ class KotlinSampleRun {
     @Test
     fun `Kotlin test of Moesif Integrator`() {
         val client = OkHttpClient.Builder()
-                .addInterceptor(MoesifOkHttp3Interceptor())
+                .addInterceptor(MoesifOkHttp3Interceptor(1))
                 .build()
 
         val request = Request.Builder()
@@ -38,5 +39,6 @@ class KotlinSampleRun {
             }
             println(response.body!!.string())
         }
+        TimeUnit.SECONDS.sleep(5) // ALLOW FOR EVENTS TO BE SUBMITTED ASYNC
     }
 }

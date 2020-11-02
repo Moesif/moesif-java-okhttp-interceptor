@@ -31,10 +31,12 @@ public class OkHttp3RequestMapper extends EventRequestModel {
      * @return EventRequestModel
      * @throws IOException
      */
+    /*
     public static EventRequestModel createOkHttp3Request(
             Request request) throws IOException {
         return createOkHttp3Request(request, null, null);
     }
+    */
 
     /**
      * Map okHttp3 Request -> to -> Moesif EventRequestModel
@@ -48,11 +50,12 @@ public class OkHttp3RequestMapper extends EventRequestModel {
     public static EventRequestModel createOkHttp3Request(
             Request request,
             String apiVersion,
-            String ipAddress)
+            String ipAddress,
+            Long maxAllowedBodyBytesRequest)
             throws IOException {
         if (StringUtils.isBlank(ipAddress))
             ipAddress = NetUtils.getIPAddress(true);
-        return new EventRequestBuilder()
+        EventRequestBuilder erb = new EventRequestBuilder()
                 .time(new Date())
                 .uri(request.url().toString())
                 .verb(request.method())
@@ -60,10 +63,33 @@ public class OkHttp3RequestMapper extends EventRequestModel {
                 .ipAddress(ipAddress)
                 .headers(CollectionUtils.flattenMultiMap(
                         request.headers().toMultimap())
-                )
-                .body(OkHttp3RequestMapper.bodyAsJson(
-                        request))
-                .build();
+                );
+        if (isBodyContentLenAcceptable(request, maxAllowedBodyBytesRequest))
+            erb.body(OkHttp3RequestMapper.bodyAsJson(
+                        request));
+        return erb.build();
+    }
+
+    /**
+     * Examine request header and verify content length is either absent
+     * or within maxAllowedBodyBytesReq
+     * @param request
+     * @param maxAllowedBodyBytesReq
+     * @return wither contentLength is within limits
+     * @throws IOException
+     */
+    private static boolean isBodyContentLenAcceptable(
+            Request request,
+            Long maxAllowedBodyBytesReq)throws IOException {
+        if (null == maxAllowedBodyBytesReq)
+            return true;
+        if (maxAllowedBodyBytesReq > 0
+                && request != null
+                && request.body() != null){
+            // contentLength returned could be -1 if unknown content length
+            return request.body().contentLength() <= maxAllowedBodyBytesReq;
+        }
+        return false;
     }
 
     /**

@@ -17,6 +17,11 @@ public class MoesifOkHttp3InterceptorUnitTest {
     }
 
     @Test
+    void testInitConfigWithEventBufferSize(){
+        new MoesifOkHttp3Interceptor(5);
+    }
+
+    @Test
     void testInitSetConfig(){
         new MoesifOkHttp3Interceptor(
                 new MoesifApiConnConfig(

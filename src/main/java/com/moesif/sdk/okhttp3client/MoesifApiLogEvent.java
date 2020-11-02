@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -18,27 +19,18 @@ public class MoesifApiLogEvent {
 
     private static final Logger logger = LoggerFactory.getLogger(MoesifApiLogEvent.class);
 
-    public static void sendEventAsync(String moesifKey,
-                                      EventModel loggedEvent)
-            throws IOException, InterruptedException {
-        MoesifAPIClient client = new MoesifAPIClient(moesifKey);
-        final APIController apiController = client.getAPI();
-        final CountDownLatch cdLatch = new CountDownLatch(1);
-        MoesifApiCallBack callBack = new MoesifApiCallBack(cdLatch);
-        apiController.createEventAsync(loggedEvent, callBack);
-        if (!cdLatch.await(10000, TimeUnit.MILLISECONDS))
-            logger.warn("Lock await failed");
-    }
+    public static void sendEventsAsync(String moesifApplicationId, List<EventModel> loggedEvents)
+            throws IOException {
+            MoesifAPIClient client = new MoesifAPIClient(moesifApplicationId);
+            final APIController apiController = client.getAPI();
+            MoesifApiCallBack callBack = new MoesifApiCallBack();
+            apiController.createEventsBatchAsync(loggedEvents, callBack);
+        }
 
     public static class MoesifApiCallBack implements APICallBack<HttpResponse>{
-        public static CountDownLatch cdLatch;
-        public MoesifApiCallBack(CountDownLatch cdLatch){
-            this.cdLatch = cdLatch;
-        }
 
         public void onSuccess(HttpContext context, HttpResponse response) {
             inspectStatusCode(context.getResponse().getStatusCode());
-            cdLatch.countDown();
         }
 
         private static void inspectStatusCode(int respStatusCode){

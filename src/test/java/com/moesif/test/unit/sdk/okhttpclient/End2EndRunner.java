@@ -48,9 +48,9 @@ public class End2EndRunner {
     public static OkHttpClient.Builder getBuilder(boolean isNetworkInterceptor) throws IOException {
         OkHttpClient.Builder bld = new OkHttpClient.Builder();
         if (isNetworkInterceptor)
-            bld.addNetworkInterceptor(new MoesifOkHttp3Interceptor());
+            bld.addNetworkInterceptor(new MoesifOkHttp3Interceptor(1));
         else
-            bld.addInterceptor(new MoesifOkHttp3Interceptor());
+            bld.addInterceptor(new MoesifOkHttp3Interceptor(1));
         addTimeout(bld);
         return bld;
     }

@@ -19,6 +19,8 @@ public class DefaultDomainData {
                     "application/x-httpd-php",
                     "application/xhtml+xml",
                     "application/xml",
+                    "text/calendar",
+                    "text/css",
                     "text/csv",
                     "text/html",
                     "text/javascript",
@@ -83,8 +85,6 @@ public class DefaultDomainData {
                     "image/tiff",
                     "image/vnd.microsoft.icon",
                     "image/webp",
-                    "text/calendar",
-                    "text/css",
                     "video/3gpp",
                     "video/3gpp2",
                     "video/mp2t",
@@ -94,6 +94,7 @@ public class DefaultDomainData {
                     "video/x-msvideo"
             );
 
-    public static Integer maxAllowedBytes = 1024 * 1024; // 1MB limit
+    public static Long maxAllowedBodyBytesRequest = 1024 * 100L; // 1MB for req + resp combined
 
+    public static Long maxAllowedBodyBytesResponse = 1024 * 100L; // 1MB for req + resp combined
 }

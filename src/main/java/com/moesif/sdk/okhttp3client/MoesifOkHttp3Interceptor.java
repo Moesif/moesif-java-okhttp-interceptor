@@ -61,6 +61,29 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
 
     /**
      * Initialize the Interceptor
+     * @param moesifApplicationId String Moesif Application Id
+     * @param eventsBufferSize How many events to queue in buffer prior to send
+     *                        to collector
+     */
+    public MoesifOkHttp3Interceptor(String moesifApplicationId, Integer eventsBufferSize) {
+        MoesifApiConnConfig  c = new MoesifApiConnConfig(moesifApplicationId);
+        c.setEventsBufferSize(eventsBufferSize);
+        init(c);
+    }
+
+
+    /**
+     * Initialize the Interceptor
+     * @param eventsBufferSize How many events to queue in buffer prior to send
+     *                        to collector
+     */
+    public MoesifOkHttp3Interceptor(Integer eventsBufferSize) {
+        MoesifApiConnConfig  c = new MoesifApiConnConfig(null);
+        c.setEventsBufferSize(eventsBufferSize);
+        init(c);
+    }
+    /**
+     * Initialize the Interceptor
      * @param connConfig
      */
     public MoesifOkHttp3Interceptor(MoesifApiConnConfig connConfig) {
@@ -92,7 +115,8 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
                 OkHttp3RequestMapper.createOkHttp3Request(
                         request,
                          null, //TODO how to match play sdk MoesifApiFilter.scala
-                        connConfig.getBaseUri());
+                        connConfig.getBaseUri(),
+                        connConfig.getMaxAllowedBodyBytesRequest());
         Response response;
         try {
             response = chain.proceed(request);
@@ -109,7 +133,7 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
                         connection);
         if (!respw.hasNullBody()) {
             try {
-                int outStreamSize = (int) respw.getBodyContentLength() * 2;
+                int outStreamSize = (int) respw.getBodyContentLength();
                 final ByteArrayOutputStream outputStream = outStreamSize > 0
                         ? new ByteArrayOutputStream(outStreamSize)
                         : new ByteArrayOutputStream();
@@ -119,7 +143,8 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
                                                 outputStream,
                                                 respw.isJsonHeader(),
                                                 connConfig.getApplicationId(),
-                                                connConfig.getMaxAllowedBodySize());
+                                                connConfig.getMaxAllowedBodyBytesResponse(),
+                                                connConfig.getEventsBufferSize());
                 InputStream bodyByIS = isAllowedContentType(respw.getBodyContentType(),
                                                 connConfig.getBodyContentTypesBlackList())
                                     ? respw.getBodyByteInputStream()
@@ -142,11 +167,11 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
                             .build();
                 }
             } catch (Exception e) {
-                logger.debug("Error parsing response body", e);
+                logger.warn("Error parsing response body", e);
             }
         }
         else {
-            logger.debug("Body is null");
+            logger.warn("Body is null");
         }
         return response;
     }
