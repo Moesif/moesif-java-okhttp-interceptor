@@ -21,11 +21,18 @@ With a single statement `.addInterceptor(new MoesifOkHttp3Interceptor())` it can
 For Maven users, add dependency to your `pom.xml`: 
   
 ```xml  
+  <repositories>
+    <repository>
+      <id>bintray-moesif-maven</id>
+      <name>bintray</name>
+      <url>http://dl.bintray.com/moesif/maven</url>
+    </repository>
+  </repositories>
+
 <dependency>
 	<groupId>com.moesif</groupId>
 	<artifactId>moesif-okhttp-interceptor</artifactId>
 	<version>1.0.0</version>
-	<type>pom</type>
 </dependency> 
 ```  
 For Gradle users, add to your project's build.gradle file:  
