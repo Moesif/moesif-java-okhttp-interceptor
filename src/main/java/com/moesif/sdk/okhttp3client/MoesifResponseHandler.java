@@ -5,6 +5,7 @@ import com.moesif.api.models.EventRequestModel;
 import com.moesif.api.models.EventResponseModel;
 import com.moesif.helpers.EncodeUtils;
 import com.moesif.sdk.okhttp3client.models.OkHttp3EventMapper;
+import com.moesif.sdk.okhttp3client.models.filter.IMoesifEventFilter;
 import com.moesif.sdk.okhttp3client.util.JsonSerialize;
 import com.moesif.external.facebook.stetho.inspector.network.ResponseHandler;
 import org.slf4j.Logger;
@@ -25,6 +26,11 @@ public class MoesifResponseHandler implements ResponseHandler {
     private String moesifApplicationId;
     private static Long maxAllowedBodySize;
     private EventModelBuffer buffer;
+    private String userId;
+    private String companyId;
+    private String sessionToken;
+    private Object metadata;
+    private IMoesifEventFilter moesifEventFilter;
 
     public MoesifResponseHandler(EventRequestModel loggedRequest,
                                  EventResponseModel loggedResponse,
@@ -32,7 +38,12 @@ public class MoesifResponseHandler implements ResponseHandler {
                                  Boolean jsonHeader,
                                  String moesifApplicationId,
                                  Long maxAllowedBodyBytes,
-                                 Integer maxSendBufferSize) {
+                                 Integer maxSendBufferSize,
+                                 String userId,
+                                 String companyId,
+                                 String sessionToken,
+                                 Object metadata,
+                                 IMoesifEventFilter moesifEventFilter) {
         this.loggedRequest = loggedRequest;
         this.loggedResponse = loggedResponse;
         this.outputStream = outputStream;
@@ -40,6 +51,11 @@ public class MoesifResponseHandler implements ResponseHandler {
         this.moesifApplicationId = moesifApplicationId;
         this.maxAllowedBodySize = maxAllowedBodyBytes;
         this.buffer = new EventModelBuffer(maxSendBufferSize);
+        this.userId = userId;
+        this.companyId = companyId;
+        this.sessionToken = sessionToken;
+        this.metadata = metadata;
+        this.moesifEventFilter = moesifEventFilter;
     }
 
     @Override
@@ -54,11 +70,7 @@ public class MoesifResponseHandler implements ResponseHandler {
 
     @Override
     public void onEOF() {
-        sendEvent(loggedRequest,
-                loggedResponse,
-                outputStream,
-                jsonHeader
-        );
+        sendEvent();
 
     }
 
@@ -67,24 +79,30 @@ public class MoesifResponseHandler implements ResponseHandler {
         logger.warn("Error Decompressing stream: " + e.getMessage());
     }
 
-    private void sendEvent(EventRequestModel loggedRequest,
-                           EventResponseModel loggedResponse,
-                           ByteArrayOutputStream bodyStream,
-                           boolean isJsonHeader) {
+    private void sendEvent() {
         try {
-            setBodyAndTransferEncoding(isJsonHeader,
+            setBodyAndTransferEncoding(jsonHeader,
                     loggedResponse,
-                    bodyStream,
+                    outputStream,
                     maxAllowedBodySize);
-            final EventModel loggedEvent =
+            EventModel loggedEvent =
                     OkHttp3EventMapper.createOkHttp3Event(
                             loggedRequest,
-                            loggedResponse
+                            loggedResponse,
+                            userId,
+                            companyId,
+                            sessionToken,
+                            metadata
                     );
+            if( null != moesifEventFilter) {
+                loggedEvent = moesifEventFilter.maskContent(loggedEvent);
+            }
             buffer.add(loggedEvent);
             if (buffer.isFull()){
                 List<EventModel> loggedEvents = buffer.empty();
-                MoesifApiLogEvent.sendEventsAsync(moesifApplicationId, loggedEvents);
+                MoesifApiLogEvent.sendEventsAsync(
+                        moesifApplicationId,
+                        loggedEvents);
             }
         } catch (IllegalArgumentException e) {
             logger.warn("Is Moesif Application ID configured?", e.getMessage());
@@ -102,7 +120,7 @@ public class MoesifResponseHandler implements ResponseHandler {
             ByteArrayOutputStream bodyStream,
             Long maxAllowedBodySize)
             throws IOException {
-        if ((null != bodyStream) && (bodyStream.size() <= maxAllowedBodySize)) {
+        if ((null != bodyStream) && (bodyStream.size() <= maxAllowedBodySize)){
             if (isJsonHeader) {
                 loggedResponse.setBody(
                         JsonSerialize.jsonBAOutStreamToObj(bodyStream));

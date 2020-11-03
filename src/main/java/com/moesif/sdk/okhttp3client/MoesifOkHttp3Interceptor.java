@@ -5,6 +5,7 @@ import com.moesif.api.models.EventResponseModel;
 import com.moesif.sdk.okhttp3client.config.MoesifApiConnConfig;
 import com.moesif.sdk.okhttp3client.models.OkHttp3RequestMapper;
 import com.moesif.sdk.okhttp3client.models.OkHttp3ResponseMapper;
+import com.moesif.sdk.okhttp3client.models.filter.IInterceptEventFilter;
 import com.moesif.sdk.okhttp3client.util.ResponseWrap;
 import com.moesif.external.facebook.stetho.inspector.network.NetworkEventReporterMoesifImpl;
 import com.moesif.external.facebook.stetho.inspector.network.NetworkEventReporterMoesif;
@@ -95,6 +96,10 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
                 ? new MoesifApiConnConfig() : connConfig;
     }
 
+    public MoesifApiConnConfig getConnConfig(){
+        return this.connConfig;
+    }
+
     /**
      * This is the main entrypoint for Interceptor
      * For Application Interceptors - called once only
@@ -110,13 +115,6 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
         final String requestId =
                 String.valueOf(mNextRequestId.getAndIncrement());
         final Request request = chain.request();
-
-        final EventRequestModel loggedRequest =
-                OkHttp3RequestMapper.createOkHttp3Request(
-                        request,
-                         null, //TODO how to match play sdk MoesifApiFilter.scala
-                        connConfig.getBaseUri(),
-                        connConfig.getMaxAllowedBodyBytesRequest());
         Response response;
         try {
             response = chain.proceed(request);
@@ -124,6 +122,16 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
             logger.warn("IOException in chain cannot proceed", e.getMessage());
             throw e;
         }
+        if (connConfig.getEventFilterConfig().skip(request, response))
+            return response;
+
+        IInterceptEventFilter filter = connConfig.getEventFilterConfig();
+        final EventRequestModel loggedRequest =
+                OkHttp3RequestMapper.createOkHttp3Request(
+                        request,
+                        filter.getApiVersion(request, response).orElse(null),
+                        connConfig.getBaseUri(),
+                        connConfig.getMaxAllowedBodyBytesRequest());
 
         final Connection connection = chain.connection();
         ResponseWrap respw = new ResponseWrap(response);
@@ -133,28 +141,26 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
                         connection);
         if (!respw.hasNullBody()) {
             try {
-                int outStreamSize = (int) respw.getBodyContentLength();
-                final ByteArrayOutputStream outputStream = outStreamSize > 0
-                        ? new ByteArrayOutputStream(outStreamSize)
-                        : new ByteArrayOutputStream();
+                final ByteArrayOutputStream outputStream = genBAOutputStream(respw);
                 MoesifResponseHandler moeRespHandler = new MoesifResponseHandler(
-                                                loggedRequest,
-                                                loggedResponse,
-                                                outputStream,
-                                                respw.isJsonHeader(),
-                                                connConfig.getApplicationId(),
-                                                connConfig.getMaxAllowedBodyBytesResponse(),
-                                                connConfig.getEventsBufferSize());
-                InputStream bodyByIS = isAllowedContentType(respw.getBodyContentType(),
-                                                connConfig.getBodyContentTypesBlackList())
-                                    ? respw.getBodyByteInputStream()
-                                    : null;
+                        loggedRequest,
+                        loggedResponse,
+                        outputStream,
+                        respw.isJsonHeader(),
+                        connConfig.getApplicationId(),
+                        connConfig.getMaxAllowedBodyBytesResponse(),
+                        connConfig.getEventsBufferSize(),
+                        filter.identifyUser(request, response).orElse(null),
+                        filter.identifyCompany(request, response).orElse(null),
+                        filter.sessionToken(request, response).orElse(null),
+                        filter.getMetadata(request, response),
+                        connConfig.getEventFilterConfig());
                 InputStream responseStream = mEventReporter
                         .interpretResponseStream(
                                 requestId,
                                 respw.getBodyContentType(),
                                 respw.getContentEncoding(),
-                                bodyByIS,
+                                genBodyByteIS(respw, connConfig),
                                 moeRespHandler,
                                 outputStream
                         );
@@ -174,6 +180,21 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
             logger.warn("Body is null");
         }
         return response;
+    }
+
+    private static ByteArrayOutputStream genBAOutputStream(ResponseWrap respw){
+        int outStreamSize = (int) respw.getBodyContentLength();
+        return outStreamSize > 0
+                ? new ByteArrayOutputStream(outStreamSize)
+                : new ByteArrayOutputStream();
+    }
+
+    private static InputStream genBodyByteIS(ResponseWrap respw,
+                                             MoesifApiConnConfig connConfig){
+        return isAllowedContentType(respw.getBodyContentType(),
+                connConfig.getBodyContentTypesBlackList())
+                ? respw.getBodyByteInputStream()
+                : null;
     }
 
     /**

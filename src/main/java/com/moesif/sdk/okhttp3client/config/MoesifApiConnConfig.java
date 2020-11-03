@@ -1,5 +1,7 @@
 package com.moesif.sdk.okhttp3client.config;
 
+import com.moesif.sdk.okhttp3client.models.filter.DefaultEventFilterConfig;
+import com.moesif.sdk.okhttp3client.models.filter.IInterceptEventFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -12,6 +14,7 @@ public class MoesifApiConnConfig {
     public String baseUri;
 
     public Integer eventsBufferSize = 5;
+    private IInterceptEventFilter eventFilterConfig;
 
 
     public Collection<String> bodyContentTypesBlackList =
@@ -34,6 +37,7 @@ public class MoesifApiConnConfig {
     public void init(String applicationId, String baseUri) {
         setBaseUri(baseUri);
         setApplicationId(applicationId);
+        setEventFilterConfig(null);
     }
 
     /**
@@ -127,4 +131,15 @@ public class MoesifApiConnConfig {
     public void setEventsBufferSize(Integer eventsBufferSize) {
         this.eventsBufferSize = Math.max(eventsBufferSize, 1);
     }
+
+    public IInterceptEventFilter getEventFilterConfig() {
+        return eventFilterConfig;
+    }
+
+    public void setEventFilterConfig(IInterceptEventFilter eventFilterConfig) {
+        this.eventFilterConfig = null == eventFilterConfig
+                ? new DefaultEventFilterConfig()
+                : eventFilterConfig;
+    }
+
 }

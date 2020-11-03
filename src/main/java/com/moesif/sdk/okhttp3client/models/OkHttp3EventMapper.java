@@ -4,7 +4,6 @@ import com.moesif.api.models.EventBuilder;
 import com.moesif.api.models.EventModel;
 import com.moesif.api.models.EventRequestModel;
 import com.moesif.api.models.EventResponseModel;
-import com.moesif.sdk.okhttp3client.models.util.EventConfig;
 
 public class OkHttp3EventMapper extends EventModel {
 
@@ -16,6 +15,7 @@ public class OkHttp3EventMapper extends EventModel {
                 loggedResponse,
                 null,
                 null,
+                null,
                 null);
     }
 
@@ -24,15 +24,15 @@ public class OkHttp3EventMapper extends EventModel {
             EventResponseModel loggedResponse,
             String userId,
             String compayId,
-            String sessionToken) {
+            String sessionToken,
+            Object metadata) {
         return new EventBuilder()
                 .request(loggedRequest)
                 .response(loggedResponse)
-                .tags(EventConfig.getTagsProvider()
-                        .getValue(loggedRequest, loggedResponse))
                 .userId(userId)
                 .companyId(compayId)
                 .sessionToken(sessionToken)
+                .metadata(metadata)
                 .build();
     }
 

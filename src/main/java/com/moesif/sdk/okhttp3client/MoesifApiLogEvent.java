@@ -11,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 
 public class MoesifApiLogEvent {
 
-    private static final Logger logger = LoggerFactory.getLogger(MoesifApiLogEvent.class);
+    private static final Logger logger = LoggerFactory.getLogger(
+            MoesifApiLogEvent.class);
 
-    public static void sendEventsAsync(String moesifApplicationId, List<EventModel> loggedEvents)
+    public static void sendEventsAsync(String moesifApplicationId,
+                                       List<EventModel> loggedEvents)
             throws IOException {
             MoesifAPIClient client = new MoesifAPIClient(moesifApplicationId);
             final APIController apiController = client.getAPI();
@@ -36,6 +36,8 @@ public class MoesifApiLogEvent {
         private static void inspectStatusCode(int respStatusCode){
             if (201 != respStatusCode)
                 logger.debug("Received status code " + respStatusCode);
+            else
+                logger.debug("Event submitted to Moesif");
         }
 
         public void onFailure(HttpContext context, Throwable error) {

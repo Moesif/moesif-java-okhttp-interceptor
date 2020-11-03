@@ -13,7 +13,7 @@ public class JsonSerialize {
     /**
      * Converts ByteArrayOutputStream to Object.class
      * Uses Jackson
-     * TESTED with jackson 2.8.4 -- might fail with 2.11.3
+     * TESTED with jackson 2.8.4 + 2.9.8  -- might fail with 2.11.3
      *
      * @param os ByteArrayOutputSteam
      * @return os -> bytearray -> Object.class
@@ -26,7 +26,7 @@ public class JsonSerialize {
 
     /**
      * Converts byte array to Object.class using Jackson
-     * TESTED with jackson 2.8.4 -- might fail with 2.11.3
+     * TESTED with jackson 2.8.4 + 2.9.8 -- might fail with 2.11.3
      *
      * @param ba byte array
      * @return Object.class
@@ -37,5 +37,4 @@ public class JsonSerialize {
             return null;
         return new ObjectMapper().readValue(ba, Object.class);
     }
-
 }

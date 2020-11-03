@@ -15,6 +15,12 @@ public class OkHttp3ResponseMapper extends EventResponseModel {
             Response response,
             Connection connection) {
         String ipAddress = getIpAddr(connection);
+        return createOkHttp3Response(response, ipAddress);
+    }
+
+    public static EventResponseModel createOkHttp3Response(
+                Response response,
+                String ipAddress) {
         return new EventResponseBuilder()
                 .time(new Date())
                 .status(response.code())
