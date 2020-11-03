@@ -199,7 +199,7 @@ MoesifApiConnConfig cfg = new MoesifApiConnConfig();
 cfg.setEventsBufferSize(customSize);
 new MoesifOkHttp3Interceptor(cfg);
 ```
-Per current implementation, the batch has to be full to send events. Minimum batch size is 1 - which will send individual events immediately. Events are neither submitted based on their age in the buffer. 
+Per current implementation, the batch has to be full to send events. Minimum batch size is 1 - which will send individual events immediately. The buffered events are not modified based on aging of these events.
 
 Note that this events buffer is in memory. It is lost if the process is ended. It is emptied every time events are submitted to Moesif. Setting the buffer to be large can also increase memory consumption.
 
