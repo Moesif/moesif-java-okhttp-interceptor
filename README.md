@@ -181,11 +181,10 @@ MoesifOkHttp3Interceptor interceptor = new MoesifOkHttp3Interceptor(cfg);
 
 ```
 
-If you would like to mask specific content from `EventModel`,   
-  
-###Credits:  
+### Credits:  
 `com.moesif.external.facebook.stetho.inspector.network` contains code borrowed (and modified for Moesif) from Facebook/Stetho [Official site](https://facebook.github.io/stetho/) | [Code on Github](https://github.com/facebook/stetho)  
 *Thank you Facebook/Stetho!*  
   
-### Built for OkHttp [Official Readme](https://square.github.io/okhttp/) | [Code on Github](https://github.com/square/okhttp)  
+### Built for OkHttp 
+[Official Readme](https://square.github.io/okhttp/) | [Code on Github](https://github.com/square/okhttp)  
 *Thank you Square/OkHttp!*
