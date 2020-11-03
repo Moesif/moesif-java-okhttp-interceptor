@@ -75,7 +75,7 @@ public class OkHttp3RequestMapper extends EventRequestModel {
      * or within maxAllowedBodyBytesReq
      * @param request
      * @param maxAllowedBodyBytesReq
-     * @return wither contentLength is within limits
+     * @return whether contentLength is within limits
      * @throws IOException
      */
     private static boolean isBodyContentLenAcceptable(

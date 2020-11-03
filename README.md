@@ -4,39 +4,41 @@
 ## Introduction  
   
 `moesif-java-okhttp-interceptor` is a Java OkHttp interceptor that logs outbound HTTP(s) calls and sends events to [Moesif](https://www.moesif.com) for API analytics and monitoring    .  
-  
+
 The SDK includes `Java` and `Kotlin` examples. It is implemented as a [OkHttp Interceptor](https://square.github.io/okhttp/interceptors/)  
 and can be used either as `Application Interceptor ` or `Network Interceptor`. It requires `Moesif Application Id` credentials to submit events to Moesif.  
-  
+
 With a single statement `.addInterceptor(new MoesifOkHttp3Interceptor())` it can start capturing events.  
-  
-[Source Code and samples on GitHub](https://github.com/moesif/moesif-play-filter) //todo update URL  
+
+[Source Code and samples on GitHub](https://github.com/Moesif/moesif-java-okhttp-interceptor)  
   
 ## How to install  
-For Maven users, add dependency to your `pom.xml`: //todo need to update  
+For Maven users, add dependency to your `pom.xml`: 
   
 ```xml  
-<dependency>  
- <groupId>com.moesif.filter</groupId> <artifactId>moesif-play-filter</artifactId> <version>1.1</version></dependency>  
+<dependency>
+	<groupId>com.moesif</groupId>
+	<artifactId>moesif-okhttp-interceptor</artifactId>
+	<version>1.0.0</version>
+	<type>pom</type>
+</dependency> 
 ```  
-//todo need to update  
-For Gradle users, add the Moesif dependency to your project's build.gradle file:  
+For Gradle users, add to your project's build.gradle file:  
   
 ```gradle  
 // Include jcenter repository if you don't already have it.  
 repositories {  
  jcenter()}  
   dependencies {     
-    compile 'com.moesif.filter:moesif-play-filter:1.1'  
-}  
+    implementation 'com.moesif:moesif-okhttp-interceptor:1.0.0'
+}
 ```  
   
 #### Others  
-//todo  
-  
-The jars are available from a public [Bintray Jcenter](https://bintray.com/moesif/maven/moesif-servlet) repository.  
-  
-  
+
+The jars are available from a public [Bintray Jcenter moesif-okhttp-interceptor](https://bintray.com/moesif/maven/moesif-okhttp-interceptor) repository.  
+
+
 ## How to use  
 Set the Moesif Application Id environment variable. Alternatively, this key can also be directly passed using `MoesifApiConnConfig`.  
   
@@ -113,13 +115,16 @@ public void run() throws Exception {
   
 ## Obtaining your Moesif Application Id  
 Your Moesif Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).  
-After signing up for a Moesif account, your Moesif Application Id will be displayed during the onboarding steps.   
+After signing up for a Moesif account, your Moesif Application Id will be displayed during the onboarding steps.
   
 You can always find your Moesif Application Id at any time by logging   
 into the [_Moesif Portal_](https://www.moesif.com/), click on the top right menu,  
 and then clicking _Installation_.  
   
 ## Advanced Configuration options
+
+***Filtering, masking and customizing events sent to Moesif***
+
 By default, all events are submitted, and no content is masked.
 This default behavior is captured in the default config file `DefaultEventFilterConfig.java`
 
@@ -132,7 +137,7 @@ public static class MyCustomEventFilterConfig implements IInterceptEventFilter{
     @Override
     public EventModel maskContent(EventModel eventModel) {
         if (eventModel.getRequest().getIpAddress() == "127.0.0.1")
-            eventModel.getRequest().setIpAddress("127.0.0.2");
+            eventModel.getRequest().setIpAddress("0.0.0.0");
         return eventModel;
     }
 
@@ -178,8 +183,27 @@ To use this custom config, update it prior to constructing the interceptor
 MoesifApiConnConfig cfg = new MoesifApiConnConfig();
 cfg.setEventFilterConfig(new MyCustomEventFilterConfig());
 MoesifOkHttp3Interceptor interceptor = new MoesifOkHttp3Interceptor(cfg);
-
 ```
+
+***Batch size of events submitted to Moesif***
+
+By default, events submitted asynchronously to Moesif are batched in sizes of `5` as configured in `MoesifApiConnConfig.java`
+To configure the batch size to any value greater than zero:
+```java
+int customSize = 20; // submit events in batch of size 20
+new MoesifOkHttp3Interceptor(customSize)
+``` 
+OR
+```java
+MoesifApiConnConfig cfg = new MoesifApiConnConfig();
+cfg.setEventsBufferSize(customSize);
+new MoesifOkHttp3Interceptor(cfg);
+```
+Per current implementation, the batch has to be full to send events. Minimum batch size is 1 - which will send individual events immediately. Events are neither submitted based on their age in the buffer. 
+
+Note that this events buffer is in memory. It is lost if the process is ended. It is emptied every time events are submitted to Moesif. Setting the buffer to be large can also increase memory consumption.
+
+The events are submitted asynchronously to Moesif. So if the program ends immediately after making an OkHttp request, the event may not have been submitted to Moesif even if the event buffer is size `1`. In such case, adding a slight delay may help eg: `TimeUnit.SECONDS.sleep(3);`
 
 ### Credits:  
 `com.moesif.external.facebook.stetho.inspector.network` contains code borrowed (and modified for Moesif) from Facebook/Stetho [Official site](https://facebook.github.io/stetho/) | [Code on Github](https://github.com/facebook/stetho)  
