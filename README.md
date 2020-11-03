@@ -1,4 +1,9 @@
 # Moesif Java OkHttp Interceptor SDK  
+
+ [![Built For][ico-built-for]][link-built-for]
+ [![Latest Version][ico-version]][link-package]
+ [![Software License][ico-license]][link-license]
+ [![Source Code][ico-source]][link-source]
   
   
 ## Introduction  
@@ -212,3 +217,13 @@ The events are submitted asynchronously to Moesif. So if the program ends immedi
 ### Built for OkHttp 
 [Official Readme](https://square.github.io/okhttp/) | [Code on Github](https://github.com/square/okhttp)  
 *Thank you Square/OkHttp!*
+
+[ico-built-for]: https://img.shields.io/badge/okhttp-OkHttp%20Client-green
+[ico-version]: https://api.bintray.com/packages/moesif/maven/moesif-okhttp-interceptor/images/download.svg
+[ico-license]: https://img.shields.io/badge/License-Apache%202.0-green.svg
+[ico-source]: https://img.shields.io/github/last-commit/moesif/moesif-servlet.svg?style=social
+
+[link-built-for]: https://square.github.io/okhttp
+[link-package]: https://bintray.com/moesif/maven/moesif-okhttp-interceptor/_latestVersion
+[link-license]: https://raw.githubusercontent.com/Moesif/moesif-java-okhttp-interceptor/master/LICENSE
+[link-source]: https://github.com/moesif/moesif-java-okhttp-interceptor
