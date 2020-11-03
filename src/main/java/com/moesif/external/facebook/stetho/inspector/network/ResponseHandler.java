@@ -11,14 +11,14 @@ import java.io.IOException;
 
 /**
  * Custom hook to intercept read events delivered by
- * {@link NetworkEventReporter#interpretResponseStream}.
+ * { NetworkEventReporter#interpretResponseStream}.
  */
 public interface ResponseHandler {
     /**
      * Signal that data has been read from the response stream.
      *
      * @param numBytes Bytes read from the network stack's stream as established by
-     *                 {@link NetworkEventReporter#interpretResponseStream}.
+     *                 { NetworkEventReporter#interpretResponseStream}.
      */
     void onRead(int numBytes);
 

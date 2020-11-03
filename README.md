@@ -119,8 +119,69 @@ You can always find your Moesif Application Id at any time by logging
 into the [_Moesif Portal_](https://www.moesif.com/), click on the top right menu,  
 and then clicking _Installation_.  
   
-## Advanced Configuration options // todo  
-  
+## Advanced Configuration options
+By default, all events are submitted, and no content is masked.
+This default behavior is captured in the default config file `DefaultEventFilterConfig.java`
+
+This behavior can be overwritten by creating a custom config class that implements `IInterceptEventFilter`.
+
+Here is a sample customized config file "MyCustomEventFilterConfig.java"
+```java
+public static class MyCustomEventFilterConfig implements IInterceptEventFilter{
+
+    @Override
+    public EventModel maskContent(EventModel eventModel) {
+        if (eventModel.getRequest().getIpAddress() == "127.0.0.1")
+            eventModel.getRequest().setIpAddress("127.0.0.2");
+        return eventModel;
+    }
+
+    @Override
+    public boolean skip(Request request, Response response) {
+        return request.method() == "DELETE";
+    }
+
+    @Override
+    public Optional<String> identifyUser(Request request, Response response) {
+        return Optional.of("customUser");
+    }
+
+    @Override
+    public Optional<String> identifyCompany(Request request, Response response) {
+        return Optional.of("customCompany");
+    }
+
+    @Override
+    public Optional<String> sessionToken(Request request, Response response) {
+        return Optional.of("customSessionToken");
+    }
+
+    @Override
+    public @Nullable Map<String, Object> getMetadata(Request request, Response response) {
+        Map<String, Object> customMetadata = new HashMap<String, Object>();
+        Map<String, Object> subObject = new HashMap<String, Object>();
+        subObject.put("destructive_method", request.method() == "DELETE");
+        customMetadata.put("cost_center", "a554411");
+        customMetadata.put("retention_months", 12);
+        customMetadata.put("method_detais", subObject);
+        return customMetadata;
+    }
+
+    @Override
+    public Optional<String> getApiVersion(Request request, Response response) {
+        return Optional.of("v-3.1415");
+    }
+}
+```
+To use this custom config, update it prior to constructing the interceptor
+```java
+MoesifApiConnConfig cfg = new MoesifApiConnConfig();
+cfg.setEventFilterConfig(new MyCustomEventFilterConfig());
+MoesifOkHttp3Interceptor interceptor = new MoesifOkHttp3Interceptor(cfg);
+
+```
+
+If you would like to mask specific content from `EventModel`,   
   
 ###Credits:  
 `com.moesif.external.facebook.stetho.inspector.network` contains code borrowed (and modified for Moesif) from Facebook/Stetho [Official site](https://facebook.github.io/stetho/) | [Code on Github](https://github.com/facebook/stetho)  

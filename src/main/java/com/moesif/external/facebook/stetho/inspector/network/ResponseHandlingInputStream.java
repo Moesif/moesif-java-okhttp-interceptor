@@ -54,7 +54,7 @@ public final class ResponseHandlingInputStream extends FilterInputStream {
 
     /**
      * @param inputStream
-     * @param requestId           the requestId to use when we call the {@link NetworkEventReporter}
+     * @param requestId           the requestId to use when we call the { NetworkEventReporter}
      * @param outputStream        stream to write to.
      * @param decompressedCounter Optional decompressing counting output stream which
      *                            can be queried after each write to determine the number of decompressed bytes
@@ -62,7 +62,7 @@ public final class ResponseHandlingInputStream extends FilterInputStream {
      *                            //@param networkPeerManager A peer manager which is used to log internal errors to the
      *                            Inspector console.
      * @param responseHandler     Special interface to intercept read events before they are sent
-     *                            to peers via {@link NetworkEventReporter} methods.
+     *                            to peers via { NetworkEventReporter} methods.
      */
     public ResponseHandlingInputStream(
             InputStream inputStream,

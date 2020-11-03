@@ -37,12 +37,14 @@ public class CustomFilter {
 
         @Override
         public EventModel maskContent(EventModel eventModel) {
+            if (eventModel.getRequest().getIpAddress() == "127.0.0.1")
+                eventModel.getRequest().setIpAddress("127.0.0.2");
             return eventModel;
         }
 
         @Override
         public boolean skip(Request request, Response response) {
-            return false;
+            return request.method() == "DELETE";
         }
 
         @Override

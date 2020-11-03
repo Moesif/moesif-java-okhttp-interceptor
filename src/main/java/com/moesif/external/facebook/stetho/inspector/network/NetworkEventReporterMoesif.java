@@ -25,7 +25,7 @@ import java.io.OutputStream;
  *                   `-----------------------------`--------> httpExchangeFailed
  * </pre>
  *
- * <p>Note that {@link #interpretResponseStream} combined with {@link DefaultResponseHandler}
+ * <p>Note that {@link #interpretResponseStream} combined with { DefaultResponseHandler}
  * will automatically invoke {@link #dataReceived}, {@link #responseReadFailed} and
  * {@link #responseReadFinished}.  If you use your own custom {@link ResponseHandler} you
  * must be sure to invoke these methods manually.</p>
@@ -33,15 +33,15 @@ import java.io.OutputStream;
  * <p>For arbitrary sockets or explicitly for WebSockets, the following call flow must be met:</p>
  *
  * <pre>
- * webSocketCreated +---> webSocketWillSendHandshakeRequest ----> webSocketHandshakeResponseReceived
+ * webSocketCreated +--- >  webSocketWillSendHandshakeRequest ---- > webSocketHandshakeResponseReceived
  *                  |                                                              |
  *                  |                     ,----------------------+-----------------+--------,
  *                  |                     v                      v                          |
- *                  +---------> [ webSocketFrameSent | webSocketFrameReceived ] ---,        |
+ *                  +--------- >  [ webSocketFrameSent | webSocketFrameReceived ] ---,        |
  *                  |                     ^                      ^                 |        |
  *                  |                     `----------------------+-----------------+        |
  *                  |                                                              |        |
- *                  `---------> webSocketClosed <----------------------------------'        |
+ *                  `--------- webSocketClosed --------------------------------'        |
  *                                     ^                                                    |
  *                                     `----------------------------------------------------'
  * </pre>
@@ -112,7 +112,7 @@ public interface NetworkEventReporterMoesif {
      * @param inputStream     Response stream if applicable ("HEAD" for instance does not have a body).
      *                        {@code null} otherwise.
      * @param responseHandler Callback to forward stream events back to the relevant event reporter
-     *                        methods.  Recommend using {@link DefaultResponseHandler} for most callers.
+     *                        methods.  Recommend using { DefaultResponseHandler} for most callers.
      * @return {@link InputStream} that has been intercepted if WebkitInspector is active and enabled
      * otherwise it will return {@code inputStream}
      */
@@ -127,7 +127,7 @@ public interface NetworkEventReporterMoesif {
 
     /**
      * Indicates that there was a failure while reading from response stream.  If you use
-     * {@link #interpretResponseStream} with {@link DefaultResponseHandler} (as is recommended),
+     * {@link #interpretResponseStream} with { DefaultResponseHandler} (as is recommended),
      * this method will be invoked automatically for you.
      *
      * @param requestId Unique identifier for the request as per {@link InspectorRequest#id()}
@@ -138,7 +138,7 @@ public interface NetworkEventReporterMoesif {
 
     /**
      * Indicates that the response stream has been fully exhausted and the request is now
-     * complete.  If you use {@link #interpretResponseStream} with {@link DefaultResponseHandler}
+     * complete.  If you use {@link #interpretResponseStream} with { DefaultResponseHandler}
      * (as is recommended), this method will be invoked automatically for you.
      *
      * @param requestId Unique identifier for the request as per {@link InspectorRequest#id()}
