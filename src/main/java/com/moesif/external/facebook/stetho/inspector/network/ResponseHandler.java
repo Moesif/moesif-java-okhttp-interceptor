@@ -41,6 +41,7 @@ public interface ResponseHandler {
 
     /**
      * Signals that an error occurred while reading the response stream.
+     * @param e The exception to raise
      */
     void onError(IOException e);
 }

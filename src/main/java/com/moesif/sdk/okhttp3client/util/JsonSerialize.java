@@ -16,8 +16,8 @@ public class JsonSerialize {
      * TESTED with jackson 2.8.4 + 2.9.8  -- might fail with 2.11.3
      *
      * @param os ByteArrayOutputSteam
-     * @return os -> bytearray -> Object.class
-     * @throws IOException
+     * @return os - bytearray - Object.class
+     * @throws IOException IOException
      */
     public static Object jsonBAOutStreamToObj(ByteArrayOutputStream os)
             throws IOException {
@@ -30,7 +30,7 @@ public class JsonSerialize {
      *
      * @param ba byte array
      * @return Object.class
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static Object jsonBAOutStreamToObj(byte[] ba) throws IOException {
         if (ba.length == 0)

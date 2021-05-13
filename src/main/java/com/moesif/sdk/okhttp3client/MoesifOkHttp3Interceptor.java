@@ -85,7 +85,7 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
     }
     /**
      * Initialize the Interceptor
-     * @param connConfig
+     * @param connConfig MoesifApiConnConfig object
      */
     public MoesifOkHttp3Interceptor(MoesifApiConnConfig connConfig) {
         init(connConfig);
@@ -106,9 +106,9 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
      * For Network Interceptors - maybe called more than once
      * such as first for HTTP 301 and then for the redirect call.
      * Or multiple times for authentication scenarios
-     * @param chain
+     * @param chain chain
      * @return Response object
-     * @throws IOException
+     * @throws IOException IOException
      */
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -199,9 +199,9 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
 
     /**
      * Checks whether Content-Type is contained in blockedContentTypes
-     * @param cTypeToCheck
-     * @param blockedContentTypes
-     * @return
+     * @param cTypeToCheck The content-type to check
+     * @param blockedContentTypes Blocked content types
+     * @return boolean whether content type is either not specified or not blocked.
      */
     public static boolean isAllowedContentType(String cTypeToCheck,
                                        Collection<String> blockedContentTypes){

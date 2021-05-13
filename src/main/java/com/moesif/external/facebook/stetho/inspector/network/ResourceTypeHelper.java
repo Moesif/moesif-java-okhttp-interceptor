@@ -38,6 +38,7 @@ public class ResourceTypeHelper {
     /**
      * Strip out any extra data following the semicolon (e.g. \"text/javascript; charset=UTF-8").
      *
+     * @param contentType Content type string
      * @return MIME type with content extras stripped out (if there were any).
      */
     public String stripContentExtras(String contentType) {

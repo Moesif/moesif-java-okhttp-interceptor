@@ -43,7 +43,7 @@ public class MoesifApiConnConfig {
     /**
      * THIS DOES NOT WORK AT THE MOMENT
      * as the moesifapi-java has the Url hardcoded
-     * @return
+     * @return the base URI
      */
     public String getBaseUri() {
         Validate.notBlank(baseUri, "BaseUrl not set");
@@ -53,7 +53,7 @@ public class MoesifApiConnConfig {
     /**
      * THIS DOES NOT WORK AT THE MOMENT
      * as the moesifapi-java has the Url hardcoded
-     * @param baseUri
+     * @param baseUri The base URI to set
      */
     public void setBaseUri(String baseUri) {
         this.baseUri = getOrBlank(baseUri,
@@ -108,7 +108,7 @@ public class MoesifApiConnConfig {
      * Max bytes of body bytes for Request.
      * All body above this size are dropped.
      *
-     * @return
+     * @return The max allowed number of bytes in a request body
      */
 
     public Long getMaxAllowedBodyBytesRequest() {
@@ -118,7 +118,7 @@ public class MoesifApiConnConfig {
      * Max bytes of body bytes for Response.
      * All body above this size are dropped.
      *
-     * @return
+     * @return The max allowed number of bytes in a response body
      */
     public Long getMaxAllowedBodyBytesResponse() {
         return DefaultDomainData.maxAllowedBodyBytesResponse;
