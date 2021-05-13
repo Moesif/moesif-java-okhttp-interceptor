@@ -10,17 +10,17 @@ import java.util.Optional;
 public interface IOkHttpModelFilter {
     /**
      * If return value is True, Event is not submitted to Moesif
-     * @param request
-     * @param response
+     * @param request The request object
+     * @param response the response object
      * @return 'true' indicates dont submit event to Moesif
      */
     public boolean skip(Request request, Response response);
 
     /**
      *
-     * @param request
-     * @param response
-     * @return
+     * @param request the request object
+     * @param response the response object
+     * @return Optional string containing identified user
      */
     public Optional<String> identifyUser(Request request, Response  response);
     public Optional<String> identifyCompany(Request request, Response  response);

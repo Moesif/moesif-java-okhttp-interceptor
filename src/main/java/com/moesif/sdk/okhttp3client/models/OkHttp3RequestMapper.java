@@ -18,18 +18,18 @@ import java.io.OutputStream;
 import java.util.Date;
 
 /**
- * Map okHttp3 Request -> to -> Moesif EventRequestModel
+ * Map okHttp3 Request  to  Moesif EventRequestModel
  */
 public class OkHttp3RequestMapper extends EventRequestModel {
 
     /**
-     * Map okHttp3 Request -> to -> Moesif EventRequestModel
+     * Map okHttp3 Request  to  Moesif EventRequestModel
      * set local ipv4 for ip address
      * set apiVersion to null
      *
      * @param request okHttp3 Request
      * @return EventRequestModel
-     * @throws IOException
+     * @throws IOException IOException
      */
     /*
     public static EventRequestModel createOkHttp3Request(
@@ -39,13 +39,14 @@ public class OkHttp3RequestMapper extends EventRequestModel {
     */
 
     /**
-     * Map okHttp3 Request -> to -> Moesif EventRequestModel
+     * Map okHttp3 Request  to  Moesif EventRequestModel
      *
      * @param request    okHttp3 Request
      * @param apiVersion allow client to set outbound apiVersion eg:"uber-v1"
      * @param ipAddress  IP addr where event occurred, If null, use local IPV4
+     * @param maxAllowedBodyBytesRequest The maximum allowed number of bytes in request body
      * @return EventRequestModel
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static EventRequestModel createOkHttp3Request(
             Request request,
@@ -73,10 +74,10 @@ public class OkHttp3RequestMapper extends EventRequestModel {
     /**
      * Examine request header and verify content length is either absent
      * or within maxAllowedBodyBytesReq
-     * @param request
-     * @param maxAllowedBodyBytesReq
+     * @param request The request
+     * @param maxAllowedBodyBytesReq The maximum allowed size of body bytes in request
      * @return whether contentLength is within limits
-     * @throws IOException
+     * @throws IOException IOException
      */
     private static boolean isBodyContentLenAcceptable(
             Request request,
@@ -96,9 +97,9 @@ public class OkHttp3RequestMapper extends EventRequestModel {
      * Convert RequestBody to Object.
      * Uses Stetho RequestBodyHelper to gunzip + deflate
      *
-     * @param request
-     * @return
-     * @throws IOException
+     * @param request The request
+     * @return Json Object or null
+     * @throws IOException IOException
      */
     @Nullable
     private static Object bodyAsJson(Request request)

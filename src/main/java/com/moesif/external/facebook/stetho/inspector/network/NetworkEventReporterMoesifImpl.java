@@ -39,6 +39,7 @@ public class NetworkEventReporterMoesifImpl implements NetworkEventReporterMoesi
     /**
      * Static accessor allowing callers to easily hook into the WebKit Inspector system without
      * creating dependencies on the main Stetho initialization code path.
+     * @return existing or new instance of NetworkEventReporterMoesifImpl
      */
     public static synchronized NetworkEventReporterMoesif get() {
         if (sInstance == null) {
@@ -49,7 +50,7 @@ public class NetworkEventReporterMoesifImpl implements NetworkEventReporterMoesi
 
     /**
      * Not used by Moesif
-     * @return
+     * @return isEnabled
      */
     @Override
     public boolean isEnabled() {

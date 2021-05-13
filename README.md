@@ -16,40 +16,25 @@ and can be used either as `Application Interceptor ` or `Network Interceptor`. I
 With a single statement `.addInterceptor(new MoesifOkHttp3Interceptor())` it can start capturing events.  
 
 [Source Code and samples on GitHub](https://github.com/Moesif/moesif-java-okhttp-interceptor)  
-  
+
 ## How to install  
 For Maven users, add dependency to your `pom.xml`: 
   
 ```xml  
-  <repositories>
-    <repository>
-      <id>bintray-moesif-maven</id>
-      <name>bintray</name>
-      <url>http://dl.bintray.com/moesif/maven</url>
-    </repository>
-  </repositories>
-
 <dependency>
 	<groupId>com.moesif</groupId>
 	<artifactId>moesif-okhttp-interceptor</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.2</version>
 </dependency> 
 ```  
 For Gradle users, add to your project's build.gradle file:  
   
 ```gradle  
-// Include jcenter repository if you don't already have it.  
 repositories {  
- jcenter()}  
   dependencies {     
-    implementation 'com.moesif:moesif-okhttp-interceptor:1.0.0'
+    implementation 'com.moesif:moesif-okhttp-interceptor:1.0.2'
 }
 ```  
-  
-#### Others  
-
-The jars are available from a public [Bintray Jcenter moesif-okhttp-interceptor](https://bintray.com/moesif/maven/moesif-okhttp-interceptor) repository.  
-
 
 ## How to use  
 Set the Moesif Application Id environment variable. Alternatively, this key can also be directly passed using `MoesifApiConnConfig`.  
