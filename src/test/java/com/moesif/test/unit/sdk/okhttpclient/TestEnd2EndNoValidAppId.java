@@ -3,7 +3,7 @@ package com.moesif.test.unit.sdk.okhttpclient;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.net.ConnectException;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,7 +18,7 @@ public class TestEnd2EndNoValidAppId extends End2EndRunner {
     })
     public void test_ConnTimeout(String url) {
         for (boolean isNetworkIntercept : APP_AND_NET_INTERCEPT)
-            assertThrows(ConnectException.class, () -> {
+            assertThrows(IOException.class, () -> {
                         runInterceptor(url, isNetworkIntercept);
                     },
                     toMsg("Conn exception expected: ",

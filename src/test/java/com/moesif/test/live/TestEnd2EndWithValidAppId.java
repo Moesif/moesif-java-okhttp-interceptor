@@ -10,7 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -45,7 +44,7 @@ public class TestEnd2EndWithValidAppId extends End2EndRunner {
     })
     public void test_ConnTimeout(String url) {
         for (boolean isNetworkIntercept : APP_AND_NET_INTERCEPT)
-            assertThrows(ConnectException.class, () -> {
+            assertThrows(IOException.class, () -> {
                         runInterceptor(url, isNetworkIntercept);
                         TimeUnit.SECONDS.sleep(5); // ALLOW FOR ASYNC EVENTS TO BE SUBMITTED
                     },
