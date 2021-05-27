@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MoesifApiConnConfigUnitTest {
 
-    @Test
+    /*@Test
     void testEnsureEnvVarAppIdNotSet() {
         assertTrue(
                 StringUtils.isBlank(EnvironmentVars.loadVar(
                         EnvironmentVars.MOESIF_APPLICATION_ID)));
-    }
+    }*/
 
-    @Test
+    /*@Test
     void testDoesntExistLoadMoesifApplicationId() {
         assertTrue(
                 StringUtils.isBlank(
@@ -27,7 +27,7 @@ public class MoesifApiConnConfigUnitTest {
                 StringUtils.isBlank(
                         new MoesifApiConnConfig().getApplicationId()));
         return;
-    }
+    }*/
 
     @Test
     void testMoesifApiConnConfigUnit() {
