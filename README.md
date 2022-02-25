@@ -211,11 +211,11 @@ The events are submitted asynchronously to Moesif. So if the program ends immedi
 *Thank you Square/OkHttp!*
 
 [ico-built-for]: https://img.shields.io/badge/okhttp-OkHttp%20Client-green
-[ico-version]: https://api.bintray.com/packages/moesif/maven/moesif-okhttp-interceptor/images/download.svg
+[ico-version]: https://img.shields.io/maven-central/v/com.moesif/moesif-okhttp-interceptor
 [ico-license]: https://img.shields.io/badge/License-Apache%202.0-green.svg
 [ico-source]: https://img.shields.io/github/last-commit/moesif/moesif-servlet.svg?style=social
 
 [link-built-for]: https://square.github.io/okhttp
-[link-package]: https://bintray.com/moesif/maven/moesif-okhttp-interceptor/_latestVersion
+[link-package]: https://search.maven.org/artifact/com.moesif/moesif-okhttp-interceptor
 [link-license]: https://raw.githubusercontent.com/Moesif/moesif-java-okhttp-interceptor/master/LICENSE
 [link-source]: https://github.com/moesif/moesif-java-okhttp-interceptor
