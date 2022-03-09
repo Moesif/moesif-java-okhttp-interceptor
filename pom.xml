@@ -6,7 +6,7 @@
 
   <groupId>com.moesif</groupId>
   <artifactId>moesif-okhttp-interceptor</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <packaging>jar</packaging>
   <name>moesif-okhttp-interceptor</name>
   <url>https://www.moesif.com</url>
@@ -120,7 +120,7 @@
         <version>3.0.0-M5</version>
         <configuration>
           <argLine>
-              --illegal-access=permit
+            --illegal-access=permit
           </argLine>
         </configuration>
       </plugin>
@@ -130,7 +130,7 @@
         <version>3.0.0-M5</version>
         <configuration>
           <argLine>
-              --illegal-access=permit
+            --illegal-access=permit
           </argLine>
         </configuration>
       </plugin>

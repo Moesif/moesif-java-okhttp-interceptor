@@ -42,6 +42,7 @@ public class OkHttp3RequestMapper extends EventRequestModel {
      * Map okHttp3 Request  to  Moesif EventRequestModel
      *
      * @param request    okHttp3 Request
+     * @param requestDate request's Date.
      * @param apiVersion allow client to set outbound apiVersion eg:"uber-v1"
      * @param ipAddress  IP addr where event occurred, If null, use local IPV4
      * @param maxAllowedBodyBytesRequest The maximum allowed number of bytes in request body
@@ -50,14 +51,15 @@ public class OkHttp3RequestMapper extends EventRequestModel {
      */
     public static EventRequestModel createOkHttp3Request(
             Request request,
+            Date requestDate,
             String apiVersion,
             String ipAddress,
-            Long maxAllowedBodyBytesRequest)
-            throws IOException {
+            Long maxAllowedBodyBytesRequest
+    ) throws IOException {
         if (StringUtils.isBlank(ipAddress))
             ipAddress = NetUtils.getIPAddress(true);
         EventRequestBuilder erb = new EventRequestBuilder()
-                .time(new Date())
+                .time(requestDate)
                 .uri(request.url().toString())
                 .verb(request.method())
                 .apiVersion(apiVersion)

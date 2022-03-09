@@ -21,7 +21,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import java.time.Instant;
 
 /**
  * MoesifOkHttp3Interceptor
@@ -125,20 +128,40 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
         if (connConfig.getEventFilterConfig().skip(request, response))
             return response;
 
+        // Initialize the request/response time from the response.
+        Date requestDate = null;
+        Date responseDate = null;
+        try {
+            Instant utcInstance = Instant.ofEpochMilli(response.sentRequestAtMillis()); // UTC
+            requestDate = java.util.Date.from(utcInstance);
+        } catch (Exception e) {
+            requestDate = new Date();
+        }
+        try {
+            Instant utcInstance = Instant.ofEpochMilli(response.receivedResponseAtMillis()); // UTC
+            responseDate = java.util.Date.from(utcInstance);
+        } catch (Exception e) {
+            responseDate = new Date();
+        }
+
         IInterceptEventFilter filter = connConfig.getEventFilterConfig();
         final EventRequestModel loggedRequest =
                 OkHttp3RequestMapper.createOkHttp3Request(
                         request,
+                        requestDate,
                         filter.getApiVersion(request, response).orElse(null),
                         connConfig.getBaseUri(),
-                        connConfig.getMaxAllowedBodyBytesRequest());
+                        connConfig.getMaxAllowedBodyBytesRequest()
+                );
 
         final Connection connection = chain.connection();
         ResponseWrap respw = new ResponseWrap(response);
         final EventResponseModel loggedResponse =
                 OkHttp3ResponseMapper.createOkHttp3Response(
                         response,
-                        connection);
+                        responseDate,
+                        connection
+                );
         if (!respw.hasNullBody()) {
             try {
                 final ByteArrayOutputStream outputStream = genBAOutputStream(respw);

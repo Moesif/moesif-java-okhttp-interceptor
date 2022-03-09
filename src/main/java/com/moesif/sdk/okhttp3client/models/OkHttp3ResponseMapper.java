@@ -13,16 +13,20 @@ public class OkHttp3ResponseMapper extends EventResponseModel {
 
     public static EventResponseModel createOkHttp3Response(
             Response response,
-            Connection connection) {
+            Date responseDate,
+            Connection connection
+    ) {
         String ipAddress = getIpAddr(connection);
-        return createOkHttp3Response(response, ipAddress);
+        return createOkHttp3Response(response, responseDate, ipAddress);
     }
 
     public static EventResponseModel createOkHttp3Response(
                 Response response,
-                String ipAddress) {
+                Date responseDate,
+                String ipAddress
+    ) {
         return new EventResponseBuilder()
-                .time(new Date())
+                .time(responseDate)
                 .status(response.code())
                 .headers(CollectionUtils.flattenMultiMap(
                         response.headers().toMultimap())
