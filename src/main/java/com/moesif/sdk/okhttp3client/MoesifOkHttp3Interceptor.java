@@ -20,7 +20,10 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -125,20 +128,35 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
         if (connConfig.getEventFilterConfig().skip(request, response))
             return response;
 
+        Date requestDate  = new Date(response.sentRequestAtMillis());
+        Date responseDate = new Date(response.receivedResponseAtMillis());
+
+        String pattern = "MM/dd/yyyy HH:mm:ss";
+
+        // Create an instance of SimpleDateFormat used for formatting
+        // the string representation of date according to the chosen pattern
+        DateFormat df = new SimpleDateFormat(pattern);
+        System.out.println("reqDate: " + df.format(requestDate));
+        System.out.println("resDate: " + df.format(responseDate));
+
         IInterceptEventFilter filter = connConfig.getEventFilterConfig();
         final EventRequestModel loggedRequest =
                 OkHttp3RequestMapper.createOkHttp3Request(
                         request,
+                        requestDate,
                         filter.getApiVersion(request, response).orElse(null),
                         connConfig.getBaseUri(),
-                        connConfig.getMaxAllowedBodyBytesRequest());
+                        connConfig.getMaxAllowedBodyBytesRequest()
+                );
 
         final Connection connection = chain.connection();
         ResponseWrap respw = new ResponseWrap(response);
         final EventResponseModel loggedResponse =
                 OkHttp3ResponseMapper.createOkHttp3Response(
                         response,
-                        connection);
+                        responseDate,
+                        connection
+                );
         if (!respw.hasNullBody()) {
             try {
                 final ByteArrayOutputStream outputStream = genBAOutputStream(respw);

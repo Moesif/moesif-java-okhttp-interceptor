@@ -13,16 +13,28 @@ public class OkHttp3ResponseMapper extends EventResponseModel {
 
     public static EventResponseModel createOkHttp3Response(
             Response response,
-            Connection connection) {
+            Date responseDate,
+            Connection connection
+    ) {
         String ipAddress = getIpAddr(connection);
-        return createOkHttp3Response(response, ipAddress);
+        return createOkHttp3Response(response, responseDate, ipAddress);
     }
 
     public static EventResponseModel createOkHttp3Response(
                 Response response,
-                String ipAddress) {
+                Date responseDate,
+                String ipAddress
+    ) {
+        System.out.println("sentRequestAtMillis     : " + response.sentRequestAtMillis());
+        System.out.println("receivedResponseAtMillis: " + response.receivedResponseAtMillis());
+
+        // Date reqDate = new Date(response.sentRequestAtMillis());
+        // Date resDate = new Date(response.receivedResponseAtMillis());
+        // System.out.println("reqDate: " + reqDate.toString());
+        // System.out.println("resDate: " + resDate.toString());
+
         return new EventResponseBuilder()
-                .time(new Date())
+                .time(responseDate)
                 .status(response.code())
                 .headers(CollectionUtils.flattenMultiMap(
                         response.headers().toMultimap())
