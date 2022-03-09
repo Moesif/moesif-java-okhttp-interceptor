@@ -20,11 +20,11 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import java.time.Instant;
 
 /**
  * MoesifOkHttp3Interceptor
@@ -128,16 +128,21 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
         if (connConfig.getEventFilterConfig().skip(request, response))
             return response;
 
-        Date requestDate  = new Date(response.sentRequestAtMillis());
-        Date responseDate = new Date(response.receivedResponseAtMillis());
-
-        String pattern = "MM/dd/yyyy HH:mm:ss";
-
-        // Create an instance of SimpleDateFormat used for formatting
-        // the string representation of date according to the chosen pattern
-        DateFormat df = new SimpleDateFormat(pattern);
-        System.out.println("reqDate: " + df.format(requestDate));
-        System.out.println("resDate: " + df.format(responseDate));
+        // Initialize the request/response time from the response.
+        Date requestDate = null;
+        Date responseDate = null;
+        try {
+            Instant utcInstance = Instant.ofEpochMilli(response.sentRequestAtMillis()); // UTC
+            requestDate = java.util.Date.from(utcInstance);
+        } catch (Exception e) {
+            requestDate = new Date();
+        }
+        try {
+            Instant utcInstance = Instant.ofEpochMilli(response.receivedResponseAtMillis()); // UTC
+            responseDate = java.util.Date.from(utcInstance);
+        } catch (Exception e) {
+            responseDate = new Date();
+        }
 
         IInterceptEventFilter filter = connConfig.getEventFilterConfig();
         final EventRequestModel loggedRequest =

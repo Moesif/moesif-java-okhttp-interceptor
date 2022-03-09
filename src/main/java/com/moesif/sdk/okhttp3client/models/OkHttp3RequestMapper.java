@@ -42,7 +42,7 @@ public class OkHttp3RequestMapper extends EventRequestModel {
      * Map okHttp3 Request  to  Moesif EventRequestModel
      *
      * @param request    okHttp3 Request
-     * @param requestDate Date
+     * @param requestDate request's Date.
      * @param apiVersion allow client to set outbound apiVersion eg:"uber-v1"
      * @param ipAddress  IP addr where event occurred, If null, use local IPV4
      * @param maxAllowedBodyBytesRequest The maximum allowed number of bytes in request body

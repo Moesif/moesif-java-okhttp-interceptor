@@ -25,14 +25,6 @@ public class OkHttp3ResponseMapper extends EventResponseModel {
                 Date responseDate,
                 String ipAddress
     ) {
-        System.out.println("sentRequestAtMillis     : " + response.sentRequestAtMillis());
-        System.out.println("receivedResponseAtMillis: " + response.receivedResponseAtMillis());
-
-        // Date reqDate = new Date(response.sentRequestAtMillis());
-        // Date resDate = new Date(response.receivedResponseAtMillis());
-        // System.out.println("reqDate: " + reqDate.toString());
-        // System.out.println("resDate: " + resDate.toString());
-
         return new EventResponseBuilder()
                 .time(responseDate)
                 .status(response.code())
