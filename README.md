@@ -24,7 +24,7 @@ For Maven users, add dependency to your `pom.xml`:
 <dependency>
 	<groupId>com.moesif</groupId>
 	<artifactId>moesif-okhttp-interceptor</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 </dependency> 
 ```  
 For Gradle users, add to your project's build.gradle file:  
@@ -32,7 +32,7 @@ For Gradle users, add to your project's build.gradle file:
 ```gradle  
 repositories {  
   dependencies {     
-    implementation 'com.moesif:moesif-okhttp-interceptor:1.0.5'
+    implementation 'com.moesif:moesif-okhttp-interceptor:1.0.6'
 }
 ```  
 

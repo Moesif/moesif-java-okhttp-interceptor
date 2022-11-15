@@ -122,8 +122,14 @@ public class MoesifResponseHandler implements ResponseHandler {
             throws IOException {
         if ((null != bodyStream) && (bodyStream.size() <= maxAllowedBodySize)){
             if (isJsonHeader) {
-                loggedResponse.setBody(
+                try {
+                    loggedResponse.setBody(
                         JsonSerialize.jsonBAOutStreamToObj(bodyStream));
+                } catch (Exception e) {
+                    loggedResponse.setBody(
+                        EncodeUtils.BaosToB64Str(bodyStream));
+                    loggedResponse.setTransferEncoding("base64");    
+                }
             } else {
                 loggedResponse.setBody(
                         EncodeUtils.BaosToB64Str(bodyStream));
