@@ -6,7 +6,7 @@
 
   <groupId>com.moesif</groupId>
   <artifactId>moesif-okhttp-interceptor</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <packaging>jar</packaging>
   <name>moesif-okhttp-interceptor</name>
   <url>https://www.moesif.com</url>
@@ -44,7 +44,7 @@
     <dependency>
       <groupId>com.moesif.api</groupId>
       <artifactId>moesifapi</artifactId>
-      <version>1.8.0</version>
+      <version>1.8.1</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
