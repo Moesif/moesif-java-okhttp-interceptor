@@ -6,7 +6,7 @@
 
   <groupId>com.moesif</groupId>
   <artifactId>moesif-okhttp-interceptor</artifactId>
-  <version>1.0.7</version>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
   <name>moesif-okhttp-interceptor</name>
   <url>https://www.moesif.com</url>
@@ -44,12 +44,17 @@
     <dependency>
       <groupId>com.moesif.api</groupId>
       <artifactId>moesifapi</artifactId>
-      <version>1.6.18</version>
+      <version>1.8.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>2.12.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio</artifactId>
+      <version>3.4.0</version>
     </dependency>
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
@@ -59,17 +64,17 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.4.8</version>
+      <version>1.4.14</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.4.8</version>
+      <version>1.4.12</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.8.0</version>
+      <version>2.14.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
