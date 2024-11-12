@@ -19,18 +19,18 @@ import java.util.List;
 public class MoesifResponseHandler implements ResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(
                                             MoesifResponseHandler.class);
-    private EventRequestModel loggedRequest;
-    private EventResponseModel loggedResponse;
-    private ByteArrayOutputStream outputStream;
-    private Boolean jsonHeader;
-    private String moesifApplicationId;
-    private static Long maxAllowedBodySize;
-    private EventModelBuffer buffer;
-    private String userId;
-    private String companyId;
-    private String sessionToken;
-    private Object metadata;
-    private IMoesifEventFilter moesifEventFilter;
+    private final EventRequestModel loggedRequest;
+    private final EventResponseModel loggedResponse;
+    private final ByteArrayOutputStream outputStream;
+    private final Boolean jsonHeader;
+    private final String moesifApplicationId;
+    private final Long maxAllowedBodySize;
+    private final EventModelBuffer buffer;
+    private final String userId;
+    private final String companyId;
+    private final String sessionToken;
+    private final Object metadata;
+    private final IMoesifEventFilter moesifEventFilter;
 
     public MoesifResponseHandler(EventRequestModel loggedRequest,
                                  EventResponseModel loggedResponse,
@@ -105,11 +105,10 @@ public class MoesifResponseHandler implements ResponseHandler {
                         loggedEvents);
             }
         } catch (IllegalArgumentException e) {
-            logger.warn("Is Moesif Application ID configured?", e.getMessage());
+            logger.warn("Is Moesif Application ID configured? {}", e.getMessage());
         } catch (Exception e) {
-            logger.warn("Error creating or submitting event", e.getMessage());
+            logger.warn("Error creating or submitting event {}", e.getMessage());
         } catch (Throwable throwable) {
-            // jackson 2.8.4 works. 2.11.3 might not.
             logger.warn("Error with throwable", throwable);
         }
     }
@@ -118,8 +117,7 @@ public class MoesifResponseHandler implements ResponseHandler {
             boolean isJsonHeader,
             EventResponseModel loggedResponse,
             ByteArrayOutputStream bodyStream,
-            Long maxAllowedBodySize)
-            throws IOException {
+            Long maxAllowedBodySize) {
         if ((null != bodyStream) && (bodyStream.size() <= maxAllowedBodySize)){
             if (isJsonHeader) {
                 try {
