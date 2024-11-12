@@ -109,7 +109,6 @@ public class MoesifResponseHandler implements ResponseHandler {
         } catch (Exception e) {
             logger.warn("Error creating or submitting event", e.getMessage());
         } catch (Throwable throwable) {
-            // jackson 2.8.4 works. 2.11.3 might not.
             logger.warn("Error with throwable", throwable);
         }
     }

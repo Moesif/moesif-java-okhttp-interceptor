@@ -10,25 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MoesifApiConnConfigUnitTest {
-
-    /*@Test
-    void testEnsureEnvVarAppIdNotSet() {
-        assertTrue(
-                StringUtils.isBlank(EnvironmentVars.loadVar(
-                        EnvironmentVars.MOESIF_APPLICATION_ID)));
-    }*/
-
-    /*@Test
-    void testDoesntExistLoadMoesifApplicationId() {
-        assertTrue(
-                StringUtils.isBlank(
-                        EnvironmentVars.loadMoesifApplicationId()));
-        assertTrue(
-                StringUtils.isBlank(
-                        new MoesifApiConnConfig().getApplicationId()));
-        return;
-    }*/
-
     @Test
     void testMoesifApiConnConfigUnit() {
         MoesifApiConnConfig connNoParam = new MoesifApiConnConfig();
