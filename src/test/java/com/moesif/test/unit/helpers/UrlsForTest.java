@@ -6,7 +6,7 @@ public class UrlsForTest {
     public static final String URL_200_IP = "https://8.8.8.8/";
     public static final String URL_200_HTTP_HTML_NO_PATH = "http://dns.google/";
     public static final String URL_301_HTTP_NO_BODY = "http://github.com/robots.txt";
-    public static final String URL_200_HTTP_TEXT ="http://eu.httpbin.org/robots.txt";
+    public static final String URL_200_HTTP_TEXT ="https://httpstat.us/200";
     public static final String URL_404 = "https://google.com/expect-404";
     public static final String URL_DOMAIN_NOT_EXIST = "https://domain.not.exist/expect-no-domain";
     public static final String URL_POST_200_JSON = "https://jsonplaceholder.typicode.com/posts/1";
