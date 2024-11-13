@@ -122,7 +122,7 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
         try {
             response = chain.proceed(request);
         } catch (IOException e) {
-            logger.warn("IOException in chain cannot proceed", e.getMessage());
+            logger.warn("IOException in chain cannot proceed {}", e.getMessage());
             throw e;
         }
         if (connConfig.getEventFilterConfig().skip(request, response))
