@@ -33,6 +33,7 @@ public class OkHttp3EventMapper extends EventModel {
                 .companyId(compayId)
                 .sessionToken(sessionToken)
                 .metadata(metadata)
+                .direction("Outgoing")
                 .build();
     }
 
