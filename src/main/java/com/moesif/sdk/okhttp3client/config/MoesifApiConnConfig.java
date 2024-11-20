@@ -11,17 +11,14 @@ import java.util.Collection;
 
 public class MoesifApiConnConfig {
     public static String DEFAULT_BASE_URI = "https://api.moesif.net";
+
     public String baseUri;
-
     public Integer eventsBufferSize = 5;
-    private IInterceptEventFilter eventFilterConfig;
-
-
-    public Collection<String> bodyContentTypesBlackList =
-            DefaultDomainData.bodyContentTypesBlackList;
-
+    public Collection<String> bodyContentTypesBlackList = DefaultDomainData.bodyContentTypesBlackList;
 
     private String applicationId;
+    private IInterceptEventFilter eventFilterConfig;
+    private boolean debug = true;
 
     public MoesifApiConnConfig() {
         init(null, null);
@@ -30,6 +27,7 @@ public class MoesifApiConnConfig {
     public MoesifApiConnConfig(String moesifApplicationId) {
         init(moesifApplicationId, null);
     }
+
     public MoesifApiConnConfig(String applicationId, String baseUri) {
         init(applicationId, baseUri);
     }
@@ -142,4 +140,23 @@ public class MoesifApiConnConfig {
                 : eventFilterConfig;
     }
 
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    @Override
+    public String toString() { // produce a log friendly single-line string representation of the config
+        return "MoesifApiConnConfig{" +
+                "baseUri='" + baseUri + '\'' +
+                ", eventsBufferSize=" + eventsBufferSize +
+                ", eventFilterConfig=" + eventFilterConfig +
+                ", bodyContentTypesBlackList=" + bodyContentTypesBlackList +
+                ", applicationId='" + applicationId + '\'' +
+                ", debug=" + debug +
+                '}';
+    }
 }
