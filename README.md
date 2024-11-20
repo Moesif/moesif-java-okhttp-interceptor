@@ -24,7 +24,7 @@ For Maven users, add dependency to your `pom.xml`:
 <dependency>
 	<groupId>com.moesif</groupId>
 	<artifactId>moesif-okhttp-interceptor</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.6</version>
 </dependency> 
 ```  
 For Gradle users, add to your project's build.gradle file:  
@@ -32,7 +32,7 @@ For Gradle users, add to your project's build.gradle file:
 ```gradle  
 repositories {  
   dependencies {     
-    implementation 'com.moesif:moesif-okhttp-interceptor:1.1.1'
+    implementation 'com.moesif:moesif-okhttp-interceptor:1.1.6'
 }
 ```  
 
@@ -179,6 +179,7 @@ To use this custom config, update it prior to constructing the interceptor
 ```java
 MoesifApiConnConfig cfg = new MoesifApiConnConfig();
 cfg.setEventFilterConfig(new MyCustomEventFilterConfig());
+cfg.setDebug(false);
 MoesifOkHttp3Interceptor interceptor = new MoesifOkHttp3Interceptor(cfg);
 ```
 

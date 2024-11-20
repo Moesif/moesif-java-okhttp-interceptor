@@ -95,12 +95,15 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
     }
 
     public void init(MoesifApiConnConfig connConfig) {
-        this.connConfig = (null == connConfig)
+        MoesifOkHttp3Interceptor.connConfig = (null == connConfig)
                 ? new MoesifApiConnConfig() : connConfig;
+        if (getConnConfig().isDebug()) {
+            logger.debug("MoesifOkHttp3Interceptor initialized with config: {}", getConnConfig());
+        }
     }
 
     public MoesifApiConnConfig getConnConfig(){
-        return this.connConfig;
+        return connConfig;
     }
 
     /**
