@@ -18,7 +18,7 @@ public class MoesifApiConnConfig {
 
     private String applicationId;
     private IInterceptEventFilter eventFilterConfig;
-    private boolean debug = true;
+    private boolean debug;
 
     public MoesifApiConnConfig() {
         init(null, null);
