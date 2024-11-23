@@ -127,7 +127,7 @@ public class BatchEventLogger implements Runnable {
             if (201 != respStatusCode)
               logger.debug("Received status code {}", respStatusCode);
             else
-                logger.debug("Event submitted to Moesif");
+                logger.debug("Events submitted to Moesif");
         }
 
         public void onFailure(HttpContext context, Throwable error) {
