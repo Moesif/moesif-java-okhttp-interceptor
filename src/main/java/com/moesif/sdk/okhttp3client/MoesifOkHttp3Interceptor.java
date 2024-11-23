@@ -1,14 +1,15 @@
 package com.moesif.sdk.okhttp3client;
 
+import com.moesif.api.models.EventModel;
 import com.moesif.api.models.EventRequestModel;
 import com.moesif.api.models.EventResponseModel;
+import com.moesif.external.facebook.stetho.inspector.network.NetworkEventReporterMoesif;
+import com.moesif.external.facebook.stetho.inspector.network.NetworkEventReporterMoesifImpl;
 import com.moesif.sdk.okhttp3client.config.MoesifApiConnConfig;
 import com.moesif.sdk.okhttp3client.models.OkHttp3RequestMapper;
 import com.moesif.sdk.okhttp3client.models.OkHttp3ResponseMapper;
 import com.moesif.sdk.okhttp3client.models.filter.IInterceptEventFilter;
 import com.moesif.sdk.okhttp3client.util.ResponseWrap;
-import com.moesif.external.facebook.stetho.inspector.network.NetworkEventReporterMoesifImpl;
-import com.moesif.external.facebook.stetho.inspector.network.NetworkEventReporterMoesif;
 import okhttp3.*;
 import okio.BufferedSource;
 import okio.Okio;
@@ -20,11 +21,14 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import java.time.Instant;
 
 /**
  * MoesifOkHttp3Interceptor
@@ -39,12 +43,14 @@ import java.time.Instant;
  */
 public class MoesifOkHttp3Interceptor implements Interceptor {
     private static final Logger logger = LoggerFactory.getLogger(
-            MoesifOkHttp3Interceptor.class);
-
-    private final NetworkEventReporterMoesif mEventReporter =
-            NetworkEventReporterMoesifImpl.get();
-    private final AtomicInteger mNextRequestId = new AtomicInteger(0);
+        MoesifOkHttp3Interceptor.class);
     private static MoesifApiConnConfig connConfig;
+    private final NetworkEventReporterMoesif mEventReporter =
+        NetworkEventReporterMoesifImpl.get();
+    private final AtomicInteger mNextRequestId = new AtomicInteger(0);
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private BlockingQueue<EventModel> eventQueue;
+    private BatchEventLogger batchLogger;
 
     /**
      * Initialize the Interceptor
@@ -70,7 +76,7 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
      *                        to collector
      */
     public MoesifOkHttp3Interceptor(String moesifApplicationId, Integer eventsBufferSize) {
-        MoesifApiConnConfig  c = new MoesifApiConnConfig(moesifApplicationId);
+        MoesifApiConnConfig c = new MoesifApiConnConfig(moesifApplicationId);
         c.setEventsBufferSize(eventsBufferSize);
         init(c);
     }
@@ -82,10 +88,11 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
      *                        to collector
      */
     public MoesifOkHttp3Interceptor(Integer eventsBufferSize) {
-        MoesifApiConnConfig  c = new MoesifApiConnConfig(null);
+        MoesifApiConnConfig c = new MoesifApiConnConfig(null);
         c.setEventsBufferSize(eventsBufferSize);
         init(c);
     }
+
     /**
      * Initialize the Interceptor
      * @param connConfig MoesifApiConnConfig object
@@ -96,7 +103,27 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
 
     public void init(MoesifApiConnConfig connConfig) {
         MoesifOkHttp3Interceptor.connConfig = (null == connConfig)
-                ? new MoesifApiConnConfig() : connConfig;
+            ? new MoesifApiConnConfig() : connConfig;
+        eventQueue = new LinkedBlockingQueue<>(MoesifOkHttp3Interceptor.connConfig.maxQueueSize);
+        batchLogger = new BatchEventLogger(
+            eventQueue,
+            MoesifOkHttp3Interceptor.connConfig.eventsBufferSize,
+            MoesifOkHttp3Interceptor.connConfig.eventTimeoutMillis,
+            MoesifOkHttp3Interceptor.connConfig.getApplicationId()
+        );
+        executorService.submit(batchLogger);
+        // Add shutdown hook to clean up and gracefully exit
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            batchLogger.shutdown();
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+            }
+        }));
         if (getConnConfig().isDebug()) {
             logger.debug("MoesifOkHttp3Interceptor initialized with config: {}", getConnConfig());
         }
@@ -173,9 +200,8 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
                         loggedResponse,
                         outputStream,
                         respw.isJsonHeader(),
-                        connConfig.getApplicationId(),
+                        eventQueue,
                         connConfig.getMaxAllowedBodyBytesResponse(),
-                        connConfig.getEventsBufferSize(),
                         filter.identifyUser(request, response).orElse(null),
                         filter.identifyCompany(request, response).orElse(null),
                         filter.sessionToken(request, response).orElse(null),
@@ -201,8 +227,7 @@ public class MoesifOkHttp3Interceptor implements Interceptor {
             } catch (Exception e) {
                 logger.warn("Error parsing response body", e);
             }
-        }
-        else {
+        } else {
             logger.warn("Body is null");
         }
         return response;

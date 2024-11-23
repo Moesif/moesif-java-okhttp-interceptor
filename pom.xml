@@ -6,7 +6,7 @@
 
   <groupId>com.moesif</groupId>
   <artifactId>moesif-okhttp-interceptor</artifactId>
-  <version>1.1.7</version>
+  <version>1.2.0</version>
   <packaging>jar</packaging>
   <name>moesif-okhttp-interceptor</name>
   <url>https://www.moesif.com</url>
