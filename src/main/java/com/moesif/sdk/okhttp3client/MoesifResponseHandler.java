@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 
 public class MoesifResponseHandler implements ResponseHandler {
@@ -23,9 +24,8 @@ public class MoesifResponseHandler implements ResponseHandler {
     private final EventResponseModel loggedResponse;
     private final ByteArrayOutputStream outputStream;
     private final Boolean jsonHeader;
-    private final String moesifApplicationId;
+    private final BlockingQueue<EventModel> eventQueue;
     private final Long maxAllowedBodySize;
-    private final EventModelBuffer buffer;
     private final String userId;
     private final String companyId;
     private final String sessionToken;
@@ -36,9 +36,8 @@ public class MoesifResponseHandler implements ResponseHandler {
                                  EventResponseModel loggedResponse,
                                  ByteArrayOutputStream outputStream,
                                  Boolean jsonHeader,
-                                 String moesifApplicationId,
+                                 BlockingQueue<EventModel> eventQueue,
                                  Long maxAllowedBodyBytes,
-                                 Integer maxSendBufferSize,
                                  String userId,
                                  String companyId,
                                  String sessionToken,
@@ -48,9 +47,8 @@ public class MoesifResponseHandler implements ResponseHandler {
         this.loggedResponse = loggedResponse;
         this.outputStream = outputStream;
         this.jsonHeader = jsonHeader;
-        this.moesifApplicationId = moesifApplicationId;
+        this.eventQueue = eventQueue;
         this.maxAllowedBodySize = maxAllowedBodyBytes;
-        this.buffer = new EventModelBuffer(maxSendBufferSize);
         this.userId = userId;
         this.companyId = companyId;
         this.sessionToken = sessionToken;
@@ -97,12 +95,11 @@ public class MoesifResponseHandler implements ResponseHandler {
             if( null != moesifEventFilter) {
                 loggedEvent = moesifEventFilter.maskContent(loggedEvent);
             }
-            buffer.add(loggedEvent);
-            if (buffer.isFull()){
-                List<EventModel> loggedEvents = buffer.empty();
-                MoesifApiLogEvent.sendEventsAsync(
-                        moesifApplicationId,
-                        loggedEvents);
+            // Send the event to Moesif asynchronously and drop if queue is full instead of blocking
+            if (eventQueue.offer(loggedEvent)){
+                logger.debug("Event Queued: {}", loggedEvent);
+            } else {
+                logger.warn("Event Queue is full, dropping event: {}", loggedEvent);
             }
         } catch (IllegalArgumentException e) {
             logger.warn("Is Moesif Application ID configured? {}", e.getMessage());

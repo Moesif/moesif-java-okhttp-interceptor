@@ -13,7 +13,9 @@ public class MoesifApiConnConfig {
     public static String DEFAULT_BASE_URI = "https://api.moesif.net";
 
     public String baseUri;
-    public Integer eventsBufferSize = 5;
+    public Integer eventsBufferSize = 100;
+    public Integer maxQueueSize = 100000;
+    public Integer eventTimeoutMillis = 2000;
     public Collection<String> bodyContentTypesBlackList = DefaultDomainData.bodyContentTypesBlackList;
 
     private String applicationId;
